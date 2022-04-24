@@ -7,15 +7,11 @@ import androidx.compose.ui.res.stringResource
 
 sealed class UiText {
     data class DynamicString(val value: String): UiText() {
-        inner class SubNumber(val value2: Int): UiText() {
 
-            @Composable
-            override fun asString(): String {
-                return value.toString() + value2.toString()
-            }
+        inner class SubNumber(val subNumber: Int): UiText() {
 
-            fun asString2(): String {
-                return value.toString() + value2.toString()
+            fun subNumberToString(): String {
+                return value + subNumber.toString()
             }
         }
     }
@@ -25,7 +21,9 @@ sealed class UiText {
         vararg val args: Any
     ): UiText()
 
-    class DynamicNumber(val value: Int): UiText()
+    class DynamicNumber(val value: Int): UiText() {
+        fun dynamicNumberToString(): String = value.toString()
+    }
 
 
     @Composable
@@ -33,8 +31,8 @@ sealed class UiText {
         return when(this) {
             is DynamicString -> value
             is StringResource -> stringResource(resId, *args)
-            is DynamicNumber -> value.toString()
-            is DynamicString.SubNumber -> this.asString()
+            is DynamicNumber -> this.dynamicNumberToString()
+            is DynamicString.SubNumber -> this.subNumberToString()
         }
     }
 
@@ -42,8 +40,8 @@ sealed class UiText {
         return when(this) {
             is DynamicString -> value
             is StringResource -> context.getString(resId, *args)
-            is DynamicNumber -> value.toString()
-            is DynamicString.SubNumber -> this.asString2()
+            is DynamicNumber -> this.dynamicNumberToString()
+            is DynamicString.SubNumber -> this.subNumberToString()
         }
     }
 }
