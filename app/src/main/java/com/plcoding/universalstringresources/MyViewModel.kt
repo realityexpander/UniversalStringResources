@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class MyViewModel: ViewModel() {
+class MyViewModel : ViewModel() {
 
     private val errorChannel = Channel<UiText>()
     val errors = errorChannel.receiveAsFlow()
@@ -22,12 +22,14 @@ class MyViewModel: ViewModel() {
 
     fun validateInputs() {
         viewModelScope.launch {
-            if(name.length < MIN_NAME_LENGTH) {
+            if (name.length < MIN_NAME_LENGTH) {
                 errorChannel.send(
-                    UiText.StringResource(
-                        resId = R.string.min_name_length_error,
-                        MIN_NAME_LENGTH
-                    )
+//                    UiText.StringResource(
+//                        resId = R.string.min_name_length_error,
+//                        MIN_NAME_LENGTH
+//                    )
+                    UiText.DynamicString("hello")
+                        .SubNumber(2)
                 )
             }
         }
