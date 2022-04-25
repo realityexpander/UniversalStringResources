@@ -28,8 +28,7 @@ class MyViewModel : ViewModel() {
 //                        resId = R.string.min_name_length_error,
 //                        MIN_NAME_LENGTH
 //                    )
-                    UiText.DynamicString("hello")
-                        .SubNumber(2)
+                    UiText.DynamicString("hello").SubNumber(2)
                 )
             }
         }
