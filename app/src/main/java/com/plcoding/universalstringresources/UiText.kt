@@ -1,5 +1,6 @@
 package com.plcoding.universalstringresources
 
+import android.app.Application
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
@@ -8,10 +9,14 @@ import androidx.compose.ui.res.stringResource
 sealed class UiText {
     data class DynamicString(val value: String): UiText() {
 
+        override fun toString(): String {
+            return value
+        }
+
         inner class SubNumber(val subNumber: Int): UiText() {
 
-            fun subNumberToString(): String {
-                return value + subNumber.toString()
+            override fun toString(): String {
+                return "$value.$subNumber"
             }
         }
     }
@@ -22,26 +27,36 @@ sealed class UiText {
     ): UiText()
 
     class DynamicNumber(val value: Int): UiText() {
-        fun dynamicNumberToString(): String = value.toString()
+        override fun toString(): String = value.toString()
     }
 
 
     @Composable
     open fun asString(): String {
         return when(this) {
-            is DynamicString -> value
+            is DynamicString -> this.value
+            is DynamicString.SubNumber -> this.toString()
             is StringResource -> stringResource(resId, *args)
-            is DynamicNumber -> this.dynamicNumberToString()
-            is DynamicString.SubNumber -> this.subNumberToString()
+            is DynamicNumber -> this.toString()
         }
     }
 
-    open fun asString(context: Context): String {
+//    open fun asString(context: Context): String {
+    open fun asString(context: Context?): String {
         return when(this) {
-            is DynamicString -> value
-            is StringResource -> context.getString(resId, *args)
-            is DynamicNumber -> this.dynamicNumberToString()
-            is DynamicString.SubNumber -> this.subNumberToString()
+            is DynamicString -> this.value
+            is DynamicString.SubNumber -> this.toString()
+//            is StringResource -> context.getString(resId, *args)
+            is StringResource -> context?.getString(resId, *args) ?: ""
+            is DynamicNumber -> this.toString()
         }
     }
+}
+
+fun main() {
+    val x = UiText.DynamicString("hello").SubNumber(2)
+    println(x.asString(null))
+
+    val y = UiText.DynamicString("heya")
+    println(y.asString(null))
 }
